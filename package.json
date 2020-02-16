@@ -1,0 +1,56 @@
+{
+  "name": "compare_content_api",
+  "version": "1.0.0",
+  "description": "A REST API based application that can be  use to compare two files content  for similarity.",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm run prod",
+    "heroku-prebuild": "rm -rf node_modules &&  npm cache verify",
+    "dev": "NODE_ENV=development npm run watch ./src/bin/www",
+    "prod": "npm run build && NODE_ENV=production  node ./dist/bin/www.js",
+    "build": "npm run clean && babel ./src --out-dir dist --copy-files",
+    "clean": "rimraf dist",
+    "watch": "nodemon --config ./nodemon.json --"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JosephmBassey/compare_content.git"
+  },
+  "keywords": [
+    "file-compare",
+    "diff",
+    "compare",
+    "file",
+    "content"
+  ],
+  "author": "Joseph Bassey",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JosephmBassey/compare_content/issues"
+  },
+  "homepage": "https://github.com/JosephmBassey/compare_content#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "diff": "^4.0.2",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-fileupload": "^1.1.6",
+    "fs-extra": "^8.1.0",
+    "helmet": "^3.21.2",
+    "joi": "^13.4.0",
+    "jsonwebtoken": "^8.5.1",
+    "mime-types": "^2.1.26",
+    "mongoose": "^5.7.1",
+    "morgan": "^1.9.1",
+    "multer": "^1.4.2"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.4",
+    "@babel/node": "^7.2.2",
+    "@babel/preset-env": "^7.4.4",
+    "nodemon": "^1.19.0",
+    "rimraf": "^3.0.2"
+  }
+}

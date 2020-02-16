@@ -8,7 +8,7 @@
     "heroku-prebuild": "rm -rf node_modules &&  npm cache verify",
     "dev": "NODE_ENV=development npm run watch ./src/bin/www",
     "prod": "npm run build && NODE_ENV=production  node ./dist/bin/www.js",
-    "build": "npm run clean && babel ./src --out-dir dist --copy-files",
+    "build": "npm run clean && babel ./src --out-dir dist --copy-files ",
     "clean": "rimraf dist",
     "watch": "nodemon --config ./nodemon.json --"
   },

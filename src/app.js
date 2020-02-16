@@ -31,8 +31,7 @@ const port = process.env.PORT || '4000'
 app.use('/api/v1/', ...routes);
 app.get('/', (req, res) => {
     res.status(200).json({
-        msg: `Welcome to A REST API based application that can be  use to compare two files content  for similarity.
-             Please refer to the api collection`,
+        msg: `Welcome to A REST API based application that can be  use to compare two files content  for similarity. Please refer to the api collection`,
 
     });
 });

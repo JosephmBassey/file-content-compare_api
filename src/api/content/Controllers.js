@@ -51,8 +51,8 @@ class Content {
             }
             const { firstStudentFile, secondStudentFile } = req.files
 
-            let firstStudentFilePath = path.join(__dirname,`./public/uploads/${Date.now()}${firstStudentFile.name}`);
-            const secondStudentFilePath = path.join(__dirname,`./public/uploads/${Date.now()}${secondStudentFile.name}`)
+            let firstStudentFilePath = path.join(__dirname, `../../../public/uploads/${Date.now()}${firstStudentFile.name}`);
+            const secondStudentFilePath = path.join(__dirname, `../../../public/uploads/${Date.now()}${secondStudentFile.name}`)
             firstStudentFile.mv(firstStudentFilePath, function(err) {
                 if (err)
                     return res.status(500).send(err);
@@ -160,8 +160,8 @@ class Content {
                     secondStudentFileSize: secondStudentFile.size,
                 });
             }
-            firstStudentFilePath = path.join(__dirname,`./public/uploads/${Date.now()}{firstStudentFile.name}`);
-            secondStudentFilePath = path.join(__dirname,`./public/uploads/${Date.now()}{secondStudentFile.name}`)
+            firstStudentFilePath = path.join(__dirname, `../../../public/uploads/${Date.now()}{firstStudentFile.name}`);
+            secondStudentFilePath = path.join(__dirname, `../../../public/uploads/${Date.now()}{secondStudentFile.name}`)
             firstStudentFile.mv(firstStudentFilePath, function(err) {
                 if (err)
                     return res.status(500).send(err);

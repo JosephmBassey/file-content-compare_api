@@ -53,8 +53,7 @@ class Content {
 
             let firstStudentFilePath = path.join(__dirname, `../../../public/uploads/${Date.now()}${firstStudentFile.name}`);
             const secondStudentFilePath = path.join(__dirname, `../../../public/uploads/${Date.now()}${secondStudentFile.name}`)
-            fs.mkdirSync(firstStudentFilePath)
-            fs.mkdirSync(secondStudentFilePath)
+         
             firstStudentFile.mv(firstStudentFilePath, function(err) {
                 if (err)
                     return res.status(500).send(err);

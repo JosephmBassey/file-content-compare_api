@@ -51,8 +51,8 @@ class Content {
             }
             const { firstStudentFile, secondStudentFile } = req.files
 
-            let firstStudentFilePath = path.resolve(`./src/public/uploads/${Date.now()}${firstStudentFile.name}`);
-            const secondStudentFilePath = path.resolve(`./src/public/uploads/${Date.now()}${secondStudentFile.name}`)
+            let firstStudentFilePath = path.resolve(`../public/uploads/${Date.now()}${firstStudentFile.name}`);
+            const secondStudentFilePath = path.resolve(`../public/uploads/${Date.now()}${secondStudentFile.name}`)
             firstStudentFile.mv(firstStudentFilePath, function(err) {
                 if (err)
                     return res.status(500).send(err);
@@ -161,8 +161,8 @@ class Content {
                 });
             }
 
-            firstStudentFilePath = path.resolve(`./src/public/uploads/${Date.now()}{firstStudentFile.name}`);
-            secondStudentFilePath = path.resolve(`./src/public/uploads/${Date.now()}{secondStudentFile.name}`)
+            firstStudentFilePath = path.resolve(`../public/uploads/${Date.now()}{firstStudentFile.name}`);
+            secondStudentFilePath = path.resolve(`../public/uploads/${Date.now()}{secondStudentFile.name}`)
             firstStudentFile.mv(firstStudentFilePath, function(err) {
                 if (err)
                     return res.status(500).send(err);

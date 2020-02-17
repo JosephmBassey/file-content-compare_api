@@ -53,7 +53,7 @@ class Content {
 
             let firstStudentFilePath = path.join(__dirname, `../../../public/uploads/${Date.now()}${firstStudentFile.name}`);
             const secondStudentFilePath = path.join(__dirname, `../../../public/uploads/${Date.now()}${secondStudentFile.name}`)
-         
+
             firstStudentFile.mv(firstStudentFilePath, function(err) {
                 if (err)
                     return res.status(500).send(err);
@@ -65,14 +65,14 @@ class Content {
             let data = { ...req.body, firstStudentFilePath, secondStudentFilePath }
 
 
-            if (firstStudentFile.data.toString().toLowerCase().trim().replace(/\s(?=\s)/g, '') === secondStudentFile.data.toString().toLowerCase().trim().replace(/\s(?=\s)/g, '')) {
 
-                const response = await contentService.addContentToDB(data)
+            if (firstStudentFile.data.toString().toLowerCase().trim().replace(/\s(?=\s)/g, '') === secondStudentFile.data.toString().toLowerCase().trim().replace(/\s(?=\s)/g, '')) {
+                data.contentFeedBack = 'Same File Content Detected'
+                contentService.addContentToDB(data)
                 return res.status(201).json({
                     success: true,
-                    message: 'Both student file content are the same',
+                    message: 'Both student file content are the same, using  content comparison',
                     percentage: '100 percent same file content',
-                    data: response
 
                 });
             }
@@ -87,62 +87,79 @@ class Content {
                     break;
                 }
             }
-            if (firstStudentFile.size === secondStudentFile.size && contentMatch === true) {
-                await contentService.addContentToDB(data)
+            if (contentMatch) {
+                data.contentFeedBack = 'File content look almost the same'
+                contentService.addContentToDB(data)
                 return res.status(201).json({
                     success: true,
-                    message: 'Both student file content are 90 percent likely to be the same, please review!',
-                    percentage: '80 percent same file content',
+                    message: 'Both student file content are 90 percent likely to be the same, using buffer content to check!',
+                    percentage: '90 percent same file content',
+                });
+            }
+            if (firstStudentFile.size === secondStudentFile.size) {
+                data.contentFeedBack = 'File content look almost the same'
+                contentService.addContentToDB(data)
+                return res.status(201).json({
+                    success: true,
+                    message: 'Both student file content are 50 percent likely to be the same,using file size to check!',
+                    percentage: '50 percent same file content',
                     firstStudentFileSize: firstStudentFile.size,
                     secondStudentFileSize: secondStudentFile.size,
                 });
             }
-            await contentService.addContentToDB(data)
+            data.contentFeedBack = 'Different File Content '
+            contentService.addContentToDB(data)
             return res.status(201).json({
                 success: true,
                 message: 'Different file and Different Content!',
                 percentage: '0 percent match',
-                firstStudentFileSize: firstStudentFile.size,
-                secondStudentFileSize: secondStudentFile.size,
             });
         } catch (error) {
             console.log(error);
-            res.status(400).json({
-                msg: 'unable to compare file'
+            res.status(500).json({
+                message: 'Error Occur while  comparing files'
             });
         }
     }
     static async recheckContent(req, res, next) {
         try {
-            let content = await ContentModel.findById(req.ss.id);
+
+            const content = await ContentModel.findById(req.params.id)
             if (!content) {
                 return res.status(404).json({
-                    error: 'no content found for the given ID.',
-                });
-            }
-
-            const { firstStudentFilePath, secondStudentFilePath, } = content
-            const { error } = validateContent(req.body)
-            if (error) {
-                return res.status(400).json({
                     success: false,
-                    message: error.details[0].message,
-
+                    message: 'no content found for the given ID.',
                 });
             }
-            let firstStudentFileData = await fs.readFile(firstStudentFilePath, 'utf8')
-            let secondStudentFileData = await fs.readFile(secondStudentFilePath, 'utf8')
+            const { firstStudentFile, secondStudentFile } = req.files
 
-            if (firstStudentFileData.data.toString().toLowerCase().trim().replace(/\s(?=\s)/g, '') === secondStudentFileData.data.toString().toLowerCase().trim().replace(/\s(?=\s)/g, '')) {
-                return res.status(200).json({
+            let firstStudentFilePath = path.join(__dirname, `../../../public/uploads/${Date.now()}${firstStudentFile.name}`);
+            const secondStudentFilePath = path.join(__dirname, `../../../public/uploads/${Date.now()}${secondStudentFile.name}`)
+
+            firstStudentFile.mv(firstStudentFilePath, function(err) {
+                if (err)
+                    return res.status(500).send(err);
+            })
+            secondStudentFile.mv(secondStudentFilePath, function(err) {
+                if (err)
+                    return res.status(500).send(err);
+            })
+            let data = { ...req.body, firstStudentFilePath, secondStudentFilePath }
+
+
+
+            if (firstStudentFile.data.toString().toLowerCase().trim().replace(/\s(?=\s)/g, '') === secondStudentFile.data.toString().toLowerCase().trim().replace(/\s(?=\s)/g, '')) {
+                data.contentFeedBack = 'Same File Content Detected'
+                contentService.updateContentToDB(req.params.id, data)
+                return res.status(201).json({
                     success: true,
-                    message: 'Both student file content are the same',
-                    percentage: '100 percent match',
-
+                    recheck: true,
+                    message: 'Both student file content are the same, using  content comparison',
+                    percentage: '100 percent same file content',
                 });
             }
             let bufferIndex = 0,
-                length = firstStudentFileData.data.length,
+                length = firstStudentFile.data.length,
                 contentMatch = true;
             while (bufferIndex < length) {
                 if (firstStudentFile.data[bufferIndex] === secondStudentFile.data[bufferIndex]) {
@@ -152,45 +169,37 @@ class Content {
                     break;
                 }
             }
-            if (firstStudentFile.size === secondStudentFile.size && contentMatch === true) {
-                return res.status(200).json({
+            if (contentMatch) {
+                data.contentFeedBack = 'File content look almost the same'
+                contentService.updateContentToDB(req.params.id, data)
+                return res.status(201).json({
                     success: true,
-                    message: 'Both student file content are 90 percent likely to be the same, please review!',
-                    percentage: '90 percent match',
+                    message: 'Both student file content are 90 percent likely to be the same, using buffer content to check!',
+                    percentage: '90 percent same file content',
+                });
+            }
+            if (firstStudentFile.size === secondStudentFile.size) {
+                data.contentFeedBack = 'File content look almost the same'
+                contentService.updateContentToDB(req.params.id, data)
+                return res.status(201).json({
+                    success: true,
+                    message: 'Both student file content are 50 percent likely to be the same,using file size to check!',
+                    percentage: '50 percent same file content',
                     firstStudentFileSize: firstStudentFile.size,
                     secondStudentFileSize: secondStudentFile.size,
                 });
             }
-            firstStudentFilePath = path.join(__dirname, `../../../public/uploads/${Date.now()}{firstStudentFile.name}`);
-            secondStudentFilePath = path.join(__dirname, `../../../public/uploads/${Date.now()}{secondStudentFile.name}`)
-            firstStudentFile.mv(firstStudentFilePath, function(err) {
-                if (err)
-                    return res.status(500).send(err);
-            })
-            secondStudentFile.mv(secondStudentFilePath, function(err) {
-                if (err)
-                    return res.status(500).send(err);
-            })
-            const contentData = new ContentModel({
-                ...req.body,
-                firstStudentFilePath,
-                secondStudentFilePath
-            });
-            await contentData.save();
-
+            data.contentFeedBack = 'Different File Content '
+            contentService.updateContentToDB(req.params.id, data)
             return res.status(201).json({
                 success: true,
                 message: 'Different file and Different Content!',
                 percentage: '0 percent match',
-                firstStudentFileSize: firstStudentFile.size,
-                secondStudentFileSize: secondStudentFile.size,
             });
-
         } catch (error) {
-            console.log(error)
-            return res.status(500).json({
-                success: false,
-                message: 'Error occur while running content recheck',
+            console.log(error);
+            res.status(500).json({
+                message: 'Error Occur while  comparing files'
             });
         }
     }

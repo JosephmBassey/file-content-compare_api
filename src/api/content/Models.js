@@ -14,6 +14,11 @@ const contentSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    contentFeedBack: {
+        type: String,
+        required: true,
+
+    },
     firstStudentName: {
         type: String,
         required: true,
@@ -22,6 +27,10 @@ const contentSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    recheck:{
+        type: Boolean,
+        default: false
+    }
 
 }, { timestamps: true });
 contentSchema.pre('save', async function() {
@@ -41,7 +50,7 @@ contentSchema.methods.generateAuthToken = function() {
 
 
 
-const ContentModel = mongoose.model('ContentModel', contentSchema);
+const ContentModel = mongoose.model('Content', contentSchema);
 
 function validateContent(content) {
     const schema = {

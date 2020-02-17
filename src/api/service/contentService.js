@@ -7,7 +7,13 @@ class ContentService {
         const contentData = new ContentModel({
             ...data
         });
-        return await contentData.save();
+        await contentData.save();
+    }
+    async updateContentToDB(id, data) {
+        data.recheck = true,
+            await ContentModel.findByIdAndUpdate(id, {
+                ...data
+            })
     }
     async getAllContentFromDB() {
         return await ContentModel.find()
@@ -15,7 +21,7 @@ class ContentService {
     async deleteContentFromDB(id) {
         return await ContentModel.findByIdAndRemove(id)
     }
-  async getSingleContentFromDB(id) {
+    async getSingleContentFromDB(id) {
         return await ContentModel.findById(id)
     }
 }
